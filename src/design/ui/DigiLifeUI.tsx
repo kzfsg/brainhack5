@@ -263,33 +263,47 @@ export function ChoiceButton({
   color,
   children,
   delay = 0,
+  onClick,
+  selected = false,
+  dimmed = false,
+  disabled = false,
 }: {
   letter: string;
   color: string;
   children: React.ReactNode;
   delay?: number;
+  onClick?: () => void;
+  selected?: boolean;
+  dimmed?: boolean;
+  disabled?: boolean;
 }) {
   const [appear, setAppear] = React.useState(false);
+  const [hover, setHover] = React.useState(false);
   React.useEffect(() => {
     const t = setTimeout(() => setAppear(true), 100 + delay);
     return () => clearTimeout(t);
   }, [delay]);
 
+  const active = (hover && !disabled) || selected;
   return (
     <div
+      onClick={disabled ? undefined : onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       style={{
         display: 'grid',
         gridTemplateColumns: '44px 1fr 16px',
         alignItems: 'center',
         gap: 14,
         padding: '16px 16px 16px 14px',
-        background: 'rgba(255,255,255,0.025)',
-        border: `1.5px solid ${T.line}`,
+        background: selected ? rgba(color, 0.12) : active ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.025)',
+        border: `1.5px solid ${selected || active ? color : T.line}`,
         borderRadius: 14,
         transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
-        opacity: appear ? 1 : 0,
+        opacity: appear ? (dimmed ? 0.4 : 1) : 0,
         transform: `translateY(${appear ? 0 : 10}px)`,
-        cursor: 'pointer',
+        boxShadow: selected ? `0 0 0 1px ${color}, 0 8px 24px ${rgba(color, 0.25)}` : 'none',
+        cursor: disabled ? 'default' : 'pointer',
       }}
     >
       <div
@@ -366,15 +380,18 @@ export function PrimaryButton({
   children,
   size = 'lg',
   accent = T.teal,
+  onClick,
 }: {
   children: React.ReactNode;
   size?: 'lg' | 'md';
   accent?: string;
+  onClick?: () => void;
 }) {
   const padding = size === 'lg' ? '18px 22px' : '14px 18px';
   const fs = size === 'lg' ? 17 : 15;
   return (
     <div
+      onClick={onClick}
       style={{
         padding,
         borderRadius: 16,
@@ -394,11 +411,20 @@ export function PrimaryButton({
   );
 }
 
-export function GhostButton({ children, size = 'lg' }: { children: React.ReactNode; size?: 'lg' | 'md' }) {
+export function GhostButton({
+  children,
+  size = 'lg',
+  onClick,
+}: {
+  children: React.ReactNode;
+  size?: 'lg' | 'md';
+  onClick?: () => void;
+}) {
   const padding = size === 'lg' ? '16px 18px' : '12px 16px';
   const fs = size === 'lg' ? 15 : 14;
   return (
     <div
+      onClick={onClick}
       style={{
         padding,
         borderRadius: 16,

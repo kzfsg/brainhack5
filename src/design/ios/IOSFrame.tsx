@@ -66,22 +66,24 @@ export function IOSDevice({
   width = 402,
   height = 874,
   dark = false,
+  bare = false,
 }: {
   children?: React.ReactNode;
   width?: number;
   height?: number;
   dark?: boolean;
+  bare?: boolean; // full-bleed: drop the rounded bezel + drop shadow (mobile)
 }) {
   return (
     <div
       style={{
         width,
         height,
-        borderRadius: 48,
+        borderRadius: bare ? 0 : 48,
         overflow: 'hidden',
         position: 'relative',
         background: dark ? '#000' : '#F2F2F7',
-        boxShadow: '0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12)',
+        boxShadow: bare ? 'none' : '0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12)',
         fontFamily: '-apple-system, system-ui, sans-serif',
         WebkitFontSmoothing: 'antialiased',
       }}
